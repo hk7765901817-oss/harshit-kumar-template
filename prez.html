@@ -1,0 +1,2505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PREZERVE — Beauty, Without The Bottle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<style>
+:root {
+  --ivory: #FAF7F2;
+  --cream: #F5F0E8;
+  --warm-white: #FFFCF8;
+  --charcoal: #1A1A1A;
+  --deep-green: #2D5016;
+  --sage: #7A8B6E;
+  --soft-gold: #C4A77D;
+  --blush: #E8D5C4;
+  --stone: #8A8279;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--ivory);
+  color: var(--charcoal);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== PRELOADER ===== */
+#preloader {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: var(--ivory);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+#flower-canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+}
+
+.preloader-content {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  opacity: 0;
+}
+
+.preloader-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 500;
+  letter-spacing: 0.35em;
+  color: var(--charcoal);
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.preloader-tagline {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--stone);
+  margin-top: 1rem;
+  opacity: 0;
+}
+
+.skip-intro {
+  position: absolute;
+  bottom: 3rem;
+  right: 3rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--stone);
+  background: none;
+  border: 1px solid rgba(138,130,121,0.3);
+  padding: 0.6rem 1.5rem;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  z-index: 100;
+  opacity: 0;
+}
+
+.skip-intro:hover {
+  background: var(--charcoal);
+  color: var(--ivory);
+  border-color: var(--charcoal);
+}
+
+/* ===== NAVIGATION ===== */
+#main-nav {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  padding: 1.5rem 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 1000;
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#main-nav.scrolled {
+  background: rgba(250, 247, 242, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 1rem 3rem;
+  box-shadow: 0 1px 30px rgba(0,0,0,0.04);
+}
+
+.nav-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  color: var(--charcoal);
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2.5rem;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--charcoal);
+  position: relative;
+  padding-bottom: 0.3rem;
+  font-weight: 400;
+  transition: color 0.3s ease;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--charcoal);
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-links a:hover::after {
+  width: 100%;
+}
+
+.nav-actions {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.nav-action {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--charcoal);
+  transition: opacity 0.3s ease;
+}
+
+.nav-action:hover {
+  opacity: 0.6;
+}
+
+/* ===== HERO ===== */
+#hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 700px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--ivory);
+}
+
+#hero-canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  max-width: 900px;
+  padding: 0 2rem;
+}
+
+.hero-eyebrow {
+  font-size: 0.7rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--sage);
+  margin-bottom: 2rem;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(3rem, 8vw, 7rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--charcoal);
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+.hero-title span {
+  display: block;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--deep-green);
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  font-weight: 300;
+  line-height: 1.7;
+  color: var(--stone);
+  max-width: 500px;
+  margin: 0 auto 3rem;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2.5rem;
+  background: var(--charcoal);
+  color: var(--ivory);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: var(--deep-green);
+  transition: left 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 0;
+}
+
+.btn-primary span {
+  position: relative;
+  z-index: 1;
+}
+
+.btn-primary:hover::before {
+  left: 0;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2.5rem;
+  background: transparent;
+  color: var(--charcoal);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 1px solid rgba(26,26,26,0.2);
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-secondary:hover {
+  background: var(--charcoal);
+  color: var(--ivory);
+  border-color: var(--charcoal);
+}
+
+.hero-products {
+  position: absolute;
+  bottom: -5%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 2rem;
+  z-index: 5;
+  opacity: 0;
+}
+
+.hero-product {
+  width: 140px;
+  height: 200px;
+  background: linear-gradient(145deg, #f0ebe3, #e8e0d5);
+  border-radius: 8px;
+  box-shadow: 
+    0 20px 60px rgba(0,0,0,0.08),
+    0 8px 20px rgba(0,0,0,0.04),
+    inset 0 1px 0 rgba(255,255,255,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--stone);
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-product:nth-child(2) {
+  transform: translateY(-30px);
+}
+
+/* ===== SECTIONS GENERAL ===== */
+.section {
+  position: relative;
+  width: 100%;
+  padding: 10rem 0;
+  overflow: hidden;
+}
+
+.section-eyebrow {
+  font-size: 0.7rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--sage);
+  margin-bottom: 1.5rem;
+}
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--charcoal);
+}
+
+/* ===== FUTURE OF BEAUTY ===== */
+#future-beauty {
+  background: var(--charcoal);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.future-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 3rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6rem;
+  align-items: center;
+}
+
+.future-text {
+  position: relative;
+  z-index: 10;
+}
+
+.future-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(3rem, 6vw, 5.5rem);
+  font-weight: 400;
+  line-height: 1.05;
+  color: var(--ivory);
+}
+
+.future-title .line-2 {
+  display: block;
+  font-style: italic;
+  color: var(--soft-gold);
+}
+
+.future-desc {
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.8;
+  color: rgba(250,247,242,0.6);
+  margin-top: 2rem;
+  max-width: 420px;
+}
+
+.future-visual {
+  position: relative;
+  height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.future-product {
+  width: 280px;
+  height: 400px;
+  background: linear-gradient(145deg, #3a3a3a, #2a2a2a);
+  border-radius: 12px;
+  position: relative;
+  box-shadow: 
+    0 40px 80px rgba(0,0,0,0.4),
+    0 0 0 1px rgba(255,255,255,0.05);
+  transform-style: preserve-3d;
+}
+
+.future-product::before {
+  content: '';
+  position: absolute;
+  top: -20px; left: -20px;
+  width: 60px; height: 60px;
+  background: radial-gradient(circle, var(--deep-green), transparent);
+  border-radius: 50%;
+  opacity: 0.6;
+  filter: blur(20px);
+}
+
+.ingredient-orbit {
+  position: absolute;
+  width: 100%; height: 100%;
+  top: 0; left: 0;
+}
+
+.orbit-item {
+  position: absolute;
+  padding: 0.5rem 1rem;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 100px;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(250,247,242,0.7);
+  backdrop-filter: blur(10px);
+}
+
+/* ===== PRODUCT SHOWCASE ===== */
+#product-showcase {
+  background: var(--ivory);
+  padding: 8rem 0;
+}
+
+.showcase-header {
+  text-align: center;
+  margin-bottom: 6rem;
+  padding: 0 2rem;
+}
+
+.showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 3rem;
+}
+
+.showcase-card {
+  position: relative;
+  background: var(--warm-white);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.04);
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-style: preserve-3d;
+}
+
+.showcase-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+}
+
+.showcase-image {
+  width: 100%;
+  height: 320px;
+  background: linear-gradient(135deg, #f0ebe3, #e5ddd2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.showcase-image::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%; height: 40%;
+  background: linear-gradient(to top, rgba(0,0,0,0.03), transparent);
+}
+
+.showcase-placeholder {
+  width: 120px;
+  height: 180px;
+  background: linear-gradient(145deg, #e8e0d5, #d5cdc0);
+  border-radius: 8px;
+  box-shadow: 
+    0 15px 40px rgba(0,0,0,0.1),
+    inset 0 1px 0 rgba(255,255,255,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  color: var(--stone);
+  text-transform: uppercase;
+}
+
+.showcase-info {
+  padding: 2rem;
+}
+
+.showcase-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: var(--charcoal);
+  margin-bottom: 0.5rem;
+}
+
+.showcase-benefit {
+  font-size: 0.8rem;
+  color: var(--sage);
+  margin-bottom: 1rem;
+  font-weight: 400;
+}
+
+.showcase-price {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--charcoal);
+  margin-bottom: 1.5rem;
+}
+
+.showcase-btn {
+  display: inline-block;
+  padding: 0.7rem 1.8rem;
+  background: var(--charcoal);
+  color: var(--ivory);
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.showcase-btn:hover {
+  background: var(--deep-green);
+}
+
+/* ===== SUSTAINABILITY ===== */
+#sustainability {
+  background: var(--cream);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  overflow: hidden;
+}
+
+.sustain-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 8rem 3rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6rem;
+  align-items: center;
+}
+
+.sustain-visual {
+  position: relative;
+  height: 500px;
+  perspective: 1000px;
+}
+
+.bottle-group {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  transform-style: preserve-3d;
+}
+
+.bottle {
+  width: 80px;
+  height: 200px;
+  background: linear-gradient(145deg, 
+    rgba(200,200,200,0.3) 0%,
+    rgba(255,255,255,0.1) 30%,
+    rgba(200,200,200,0.2) 60%,
+    rgba(255,255,255,0.05) 100%);
+  border-radius: 8px 8px 20px 20px;
+  position: relative;
+  box-shadow: 
+    0 10px 30px rgba(0,0,0,0.1),
+    inset 0 1px 0 rgba(255,255,255,0.3),
+    inset 0 -1px 0 rgba(0,0,0,0.1);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.bottle::before {
+  content: '';
+  position: absolute;
+  top: -20px; left: 50%;
+  transform: translateX(-50%);
+  width: 30px; height: 25px;
+  background: linear-gradient(145deg, rgba(200,200,200,0.4), rgba(255,255,255,0.1));
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.bottle-cap {
+  position: absolute;
+  top: -35px; left: 50%;
+  transform: translateX(-50%);
+  width: 36px; height: 15px;
+  background: linear-gradient(145deg, #c0c0c0, #a0a0a0);
+  border-radius: 4px 4px 0 0;
+}
+
+.bar-product {
+  width: 200px;
+  height: 120px;
+  background: linear-gradient(145deg, #c4a77d, #a88b5e);
+  border-radius: 16px;
+  position: absolute;
+  box-shadow: 
+    0 20px 50px rgba(0,0,0,0.15),
+    inset 0 1px 0 rgba(255,255,255,0.3);
+  display: none;
+}
+
+.sustain-text {
+  position: relative;
+}
+
+.sustain-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--charcoal);
+  margin-bottom: 2rem;
+}
+
+.sustain-title .highlight {
+  color: var(--deep-green);
+  font-style: italic;
+}
+
+.sustain-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.sustain-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.stat-number {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  font-weight: 500;
+  color: var(--deep-green);
+  min-width: 80px;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: var(--stone);
+  font-weight: 300;
+}
+
+/* ===== COLLECTIONS ===== */
+#collections {
+  background: var(--ivory);
+}
+
+.collection-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 80vh;
+  align-items: center;
+}
+
+.collection-section:nth-child(even) {
+  direction: rtl;
+}
+
+.collection-section:nth-child(even) > * {
+  direction: ltr;
+}
+
+.collection-image {
+  position: relative;
+  height: 100%;
+  min-height: 600px;
+  background: linear-gradient(135deg, #e8e0d5, #d5cdc0);
+  overflow: hidden;
+}
+
+.collection-image::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, transparent 50%, rgba(45,80,22,0.05));
+}
+
+.collection-content {
+  padding: 6rem;
+  max-width: 600px;
+}
+
+.collection-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--sage);
+  margin-bottom: 1.5rem;
+}
+
+.collection-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--charcoal);
+  margin-bottom: 1.5rem;
+}
+
+.collection-title em {
+  font-style: italic;
+  color: var(--deep-green);
+}
+
+.collection-desc {
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.8;
+  color: var(--stone);
+  margin-bottom: 2.5rem;
+}
+
+/* ===== INGREDIENTS ===== */
+#ingredients {
+  background: var(--charcoal);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.ingredients-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 8rem 3rem;
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 6rem;
+  align-items: center;
+}
+
+.ingredients-text {
+  position: relative;
+  z-index: 10;
+}
+
+.ingredients-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--ivory);
+  margin-bottom: 2rem;
+}
+
+.ingredients-desc {
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.8;
+  color: rgba(250,247,242,0.6);
+  margin-bottom: 3rem;
+}
+
+.ingredient-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ingredient-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.ingredient-item:hover {
+  padding-left: 1rem;
+  border-bottom-color: rgba(255,255,255,0.2);
+}
+
+.ingredient-item.active {
+  padding-left: 1rem;
+  border-bottom-color: var(--soft-gold);
+}
+
+.ingredient-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--soft-gold);
+  opacity: 0.4;
+  transition: opacity 0.3s ease;
+}
+
+.ingredient-item.active .ingredient-dot {
+  opacity: 1;
+}
+
+.ingredient-name {
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(250,247,242,0.7);
+  transition: color 0.3s ease;
+}
+
+.ingredient-item.active .ingredient-name {
+  color: var(--ivory);
+}
+
+.ingredients-visual {
+  position: relative;
+  height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ingredients-product {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle at 30% 30%, #3a3a3a, #1f1f1f);
+  border-radius: 50%;
+  position: relative;
+  box-shadow: 
+    0 40px 80px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+.ingredients-product::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px; height: 280px;
+  background: linear-gradient(145deg, #c4a77d, #a88b5e);
+  border-radius: 12px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+}
+
+.ingredient-particle {
+  position: absolute;
+  padding: 0.4rem 1rem;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 100px;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(250,247,242,0.6);
+  backdrop-filter: blur(10px);
+  transition: all 0.5s ease;
+}
+
+/* ===== BRAND STORY ===== */
+#brand-story {
+  background: var(--ivory);
+  padding: 0;
+}
+
+.story-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 80vh;
+  align-items: center;
+}
+
+.story-section:nth-child(even) {
+  direction: rtl;
+}
+
+.story-section:nth-child(even) > * {
+  direction: ltr;
+}
+
+.story-image {
+  position: relative;
+  height: 100%;
+  min-height: 600px;
+  background: linear-gradient(135deg, #e8e0d5, #d5cdc0);
+  overflow: hidden;
+}
+
+.story-image::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(to bottom, transparent 60%, rgba(250,247,242,0.3));
+}
+
+.story-content {
+  padding: 6rem;
+  max-width: 600px;
+}
+
+.story-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--sage);
+  margin-bottom: 1.5rem;
+}
+
+.story-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--charcoal);
+  margin-bottom: 1.5rem;
+}
+
+.story-desc {
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.8;
+  color: var(--stone);
+}
+
+/* ===== REVIEWS ===== */
+#reviews {
+  background: var(--cream);
+  padding: 8rem 0;
+  overflow: hidden;
+}
+
+.reviews-header {
+  text-align: center;
+  margin-bottom: 5rem;
+  padding: 0 2rem;
+}
+
+.reviews-track {
+  display: flex;
+  gap: 3rem;
+  padding: 0 3rem;
+  animation: scrollReviews 40s linear infinite;
+}
+
+@keyframes scrollReviews {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.review-card {
+  flex-shrink: 0;
+  width: 450px;
+  background: var(--warm-white);
+  border-radius: 20px;
+  padding: 3rem;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.04);
+}
+
+.review-stars {
+  display: flex;
+  gap: 0.3rem;
+  margin-bottom: 1.5rem;
+}
+
+.review-star {
+  width: 16px; height: 16px;
+  background: var(--soft-gold);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+
+.review-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--charcoal);
+  margin-bottom: 2rem;
+  font-style: italic;
+}
+
+.review-author {
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--stone);
+}
+
+/* ===== FINAL CTA ===== */
+#final-cta {
+  background: var(--charcoal);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+#cta-canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 1;
+}
+
+.cta-content {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  max-width: 800px;
+  padding: 0 2rem;
+}
+
+.cta-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(3rem, 7vw, 6rem);
+  font-weight: 400;
+  line-height: 1.05;
+  color: var(--ivory);
+  margin-bottom: 2rem;
+}
+
+.cta-title em {
+  font-style: italic;
+  color: var(--soft-gold);
+}
+
+.cta-subtitle {
+  font-size: 1.1rem;
+  font-weight: 300;
+  line-height: 1.7;
+  color: rgba(250,247,242,0.6);
+  margin-bottom: 3rem;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ===== FOOTER ===== */
+#footer {
+  background: #0f0f0f;
+  padding: 6rem 3rem 3rem;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 4rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-bottom: 4rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.footer-brand {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  color: var(--ivory);
+  margin-bottom: 1rem;
+}
+
+.footer-tagline {
+  font-size: 0.85rem;
+  font-weight: 300;
+  line-height: 1.7;
+  color: rgba(250,247,242,0.4);
+  max-width: 300px;
+}
+
+.footer-column h4 {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(250,247,242,0.5);
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.footer-column ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.footer-column a {
+  font-size: 0.85rem;
+  color: rgba(250,247,242,0.4);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-column a:hover {
+  color: var(--ivory);
+}
+
+.footer-bottom {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-top: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-copyright {
+  font-size: 0.75rem;
+  color: rgba(250,247,242,0.3);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .future-container,
+  .sustain-container,
+  .ingredients-container {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .collection-section,
+  .story-section {
+    grid-template-columns: 1fr;
+  }
+
+  .collection-image,
+  .story-image {
+    min-height: 400px;
+  }
+
+  .showcase-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+
+  .showcase-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .review-card {
+    width: 320px;
+    padding: 2rem;
+  }
+}
+
+/* ===== SCROLL REVEAL ===== */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ===== PARTICLES ===== */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* ===== MOBILE MENU ===== */
+.mobile-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.mobile-menu-btn span {
+  display: block;
+  width: 24px;
+  height: 1px;
+  background: var(--charcoal);
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-btn { display: flex; }
+}
+</style>
+<base target="_blank">
+</head>
+<body>
+
+<!-- PRELOADER -->
+<div id="preloader">
+  <canvas id="flower-canvas"></canvas>
+  <div class="preloader-content">
+    <div class="preloader-logo">PREZERVE</div>
+    <div class="preloader-tagline">Beauty, Without The Bottle</div>
+  </div>
+  <button class="skip-intro" onclick="skipIntro()">Skip Intro</button>
+</div>
+
+<!-- NAVIGATION -->
+<nav id="main-nav">
+  <a href="#" class="nav-logo">PREZERVE</a>
+  <ul class="nav-links">
+    <li><a href="#product-showcase">Shop</a></li>
+    <li><a href="#collections">Hair</a></li>
+    <li><a href="#collections">Skin</a></li>
+    <li><a href="#product-showcase">Body</a></li>
+    <li><a href="#product-showcase">Sets</a></li>
+    <li><a href="#brand-story">Our Story</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="nav-action">Search</button>
+    <button class="nav-action">Account</button>
+    <button class="nav-action">Wishlist</button>
+    <button class="nav-action">Cart (0)</button>
+    <button class="mobile-menu-btn">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-eyebrow">The Future of Clean Beauty</div>
+    <h1 class="hero-title">Beauty,<br><span>Without The Bottle.</span></h1>
+    <p class="hero-subtitle">Solid formulations that deliver exceptional results. Zero plastic. Pure ingredients. Revolutionary simplicity.</p>
+    <div class="hero-buttons">
+      <a href="#product-showcase" class="btn-primary"><span>Shop Prezerve</span></a>
+      <a href="#brand-story" class="btn-secondary">Discover The Difference</a>
+    </div>
+  </div>
+  <div class="hero-products">
+    <div class="hero-product" data-tilt>Shampoo Bar</div>
+    <div class="hero-product" data-tilt>Conditioner Bar</div>
+    <div class="hero-product" data-tilt>Face Bar</div>
+  </div>
+</section>
+
+<!-- FUTURE OF BEAUTY -->
+<section id="future-beauty" class="section">
+  <div class="future-container">
+    <div class="future-text">
+      <div class="section-eyebrow reveal">Our Philosophy</div>
+      <h2 class="future-title reveal">The Future of Beauty<br><span class="line-2">Is Solid.</span></h2>
+      <p class="future-desc reveal">We reimagined beauty from the molecule up. Waterless formulations concentrate the power of nature into compact, plastic-free bars that outperform traditional products while eliminating waste.</p>
+    </div>
+    <div class="future-visual">
+      <div class="future-product" id="future-product">
+        <div class="ingredient-orbit">
+          <div class="orbit-item" style="top:10%;left:10%;">Argan Oil</div>
+          <div class="orbit-item" style="top:20%;right:5%;">Shea Butter</div>
+          <div class="orbit-item" style="bottom:30%;left:0%;">Coconut Oil</div>
+          <div class="orbit-item" style="bottom:15%;right:10%;">Aloe Vera</div>
+          <div class="orbit-item" style="top:50%;left:-10%;">Vitamin E</div>
+          <div class="orbit-item" style="top:40%;right:-5%;">Essential Oils</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT SHOWCASE -->
+<section id="product-showcase" class="section">
+  <div class="showcase-header">
+    <div class="section-eyebrow reveal">The Collection</div>
+    <h2 class="section-title reveal">Formulated for<br><em>Extraordinary Results.</em></h2>
+  </div>
+  <div class="showcase-grid">
+    <div class="showcase-card reveal" data-tilt>
+      <div class="showcase-image">
+        <div class="showcase-placeholder">Shampoo Bar</div>
+      </div>
+      <div class="showcase-info">
+        <h3 class="showcase-name">Nourishing Shampoo Bar</h3>
+        <p class="showcase-benefit">Gentle cleanse with argan & shea</p>
+        <div class="showcase-price">₹499</div>
+        <a href="#" class="showcase-btn">Shop Now</a>
+      </div>
+    </div>
+    <div class="showcase-card reveal" data-tilt>
+      <div class="showcase-image">
+        <div class="showcase-placeholder">Conditioner Bar</div>
+      </div>
+      <div class="showcase-info">
+        <h3 class="showcase-name">Hydrating Conditioner Bar</h3>
+        <p class="showcase-benefit">Deep moisture without residue</p>
+        <div class="showcase-price">₹499</div>
+        <a href="#" class="showcase-btn">Shop Now</a>
+      </div>
+    </div>
+    <div class="showcase-card reveal" data-tilt>
+      <div class="showcase-image">
+        <div class="showcase-placeholder">Face Cleanser</div>
+      </div>
+      <div class="showcase-info">
+        <h3 class="showcase-name">Balancing Face Cleanser</h3>
+        <p class="showcase-benefit">Purifies while preserving natural oils</p>
+        <div class="showcase-price">₹599</div>
+        <a href="#" class="showcase-btn">Shop Now</a>
+      </div>
+    </div>
+    <div class="showcase-card reveal" data-tilt>
+      <div class="showcase-image">
+        <div class="showcase-placeholder">Body Bar</div>
+      </div>
+      <div class="showcase-info">
+        <h3 class="showcase-name">Silken Body Bar</h3>
+        <p class="showcase-benefit">Luxurious lather, lasting hydration</p>
+        <div class="showcase-price">₹449</div>
+        <a href="#" class="showcase-btn">Shop Now</a>
+      </div>
+    </div>
+    <div class="showcase-card reveal" data-tilt>
+      <div class="showcase-image">
+        <div class="showcase-placeholder">Face Serum</div>
+      </div>
+      <div class="showcase-info">
+        <h3 class="showcase-name">Revive Face Serum Bar</h3>
+        <p class="showcase-benefit">Concentrated antioxidants & vitamins</p>
+        <div class="showcase-price">₹699</div>
+        <a href="#" class="showcase-btn">Shop Now</a>
+      </div>
+    </div>
+    <div class="showcase-card reveal" data-tilt>
+      <div class="showcase-image">
+        <div class="showcase-placeholder">Complete Set</div>
+      </div>
+      <div class="showcase-info">
+        <h3 class="showcase-name">The Complete Ritual Set</h3>
+        <p class="showcase-benefit">Full hair & skincare collection</p>
+        <div class="showcase-price">₹1,999</div>
+        <a href="#" class="showcase-btn">Shop Now</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SUSTAINABILITY -->
+<section id="sustainability">
+  <div class="sustain-container">
+    <div class="sustain-visual">
+      <div class="bottle-group" id="bottle-group">
+        <div class="bottle"><div class="bottle-cap"></div></div>
+        <div class="bottle"><div class="bottle-cap"></div></div>
+        <div class="bottle"><div class="bottle-cap"></div></div>
+        <div class="bar-product" id="bar-product"></div>
+      </div>
+    </div>
+    <div class="sustain-text">
+      <div class="section-eyebrow reveal">Sustainability</div>
+      <h2 class="sustain-title reveal">One Bar.<br><span class="highlight">Three Bottles Replaced.</span></h2>
+      <p class="reveal" style="font-size:1rem;color:var(--stone);line-height:1.8;font-weight:300;">Each Prezerve bar replaces up to three plastic bottles, eliminating single-use plastic from your daily routine while delivering superior performance.</p>
+      <div class="sustain-stats">
+        <div class="sustain-stat reveal">
+          <span class="stat-number" data-count="3">0</span>
+          <span class="stat-label">Plastic bottles replaced per bar</span>
+        </div>
+        <div class="sustain-stat reveal">
+          <span class="stat-number" data-count="80">0</span>
+          <span class="stat-label">% Less water in formulation</span>
+        </div>
+        <div class="sustain-stat reveal">
+          <span class="stat-number" data-count="100">0</span>
+          <span class="stat-label">% Plastic-free packaging</span>
+        </div>
+      </div>
+      <p class="reveal" style="font-size:1.2rem;font-family:'Playfair Display',serif;font-style:italic;color:var(--deep-green);margin-top:3rem;">Less Plastic. Less Water. More Beauty.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COLLECTIONS -->
+<section id="collections" class="section">
+  <div class="collection-section">
+    <div class="collection-image"></div>
+    <div class="collection-content">
+      <div class="collection-label reveal">Hair Care</div>
+      <h2 class="collection-title reveal">Hair,<br><em>Reimagined.</em></h2>
+      <p class="collection-desc reveal">Our solid hair care range delivers salon-quality results without a single drop of water in the formula. Concentrated botanical actives nourish from root to tip, leaving hair visibly healthier with every wash.</p>
+      <a href="#" class="btn-primary reveal"><span>Explore Hair</span></a>
+    </div>
+  </div>
+  <div class="collection-section">
+    <div class="collection-image" style="background:linear-gradient(135deg, #d5cdc0, #c8bfb2);"></div>
+    <div class="collection-content">
+      <div class="collection-label reveal">Skin Care</div>
+      <h2 class="collection-title reveal">Skin,<br><em>Simplified.</em></h2>
+      <p class="collection-desc reveal">Gentle yet effective solid skincare that respects your skin's natural barrier. Each bar is packed with clinically proven ingredients that cleanse, hydrate, and protect — all without synthetic preservatives or plastic packaging.</p>
+      <a href="#" class="btn-primary reveal"><span>Explore Skin</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- INGREDIENTS -->
+<section id="ingredients">
+  <div class="ingredients-container">
+    <div class="ingredients-text">
+      <div class="section-eyebrow reveal">Formulation</div>
+      <h2 class="ingredients-title reveal">What's Inside.</h2>
+      <p class="ingredients-desc reveal">Every ingredient is chosen for its proven efficacy and environmental integrity. No fillers. No compromises. Just concentrated botanical science.</p>
+      <div class="ingredient-list">
+        <div class="ingredient-item active" data-ingredient="argan">
+          <div class="ingredient-dot"></div>
+          <span class="ingredient-name">Moroccan Argan Oil</span>
+        </div>
+        <div class="ingredient-item" data-ingredient="shea">
+          <div class="ingredient-dot"></div>
+          <span class="ingredient-name">Organic Shea Butter</span>
+        </div>
+        <div class="ingredient-item" data-ingredient="coconut">
+          <div class="ingredient-dot"></div>
+          <span class="ingredient-name">Virgin Coconut Oil</span>
+        </div>
+        <div class="ingredient-item" data-ingredient="aloe">
+          <div class="ingredient-dot"></div>
+          <span class="ingredient-name">Aloe Vera Extract</span>
+        </div>
+        <div class="ingredient-item" data-ingredient="vitamin">
+          <div class="ingredient-dot"></div>
+          <span class="ingredient-name">Vitamin E Complex</span>
+        </div>
+        <div class="ingredient-item" data-ingredient="essential">
+          <div class="ingredient-dot"></div>
+          <span class="ingredient-name">Pure Essential Oils</span>
+        </div>
+      </div>
+    </div>
+    <div class="ingredients-visual">
+      <div class="ingredients-product" id="ingredients-product">
+        <div class="ingredient-particle" style="top:10%;left:-20%;">Omega Fatty Acids</div>
+        <div class="ingredient-particle" style="top:30%;right:-25%;">Antioxidants</div>
+        <div class="ingredient-particle" style="bottom:20%;left:-15%;">Natural Saponins</div>
+        <div class="ingredient-particle" style="bottom:10%;right:-20%;">Phytosterols</div>
+        <div class="ingredient-particle" style="top:50%;left:-30%;">Polyphenols</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BRAND STORY -->
+<section id="brand-story">
+  <div class="story-section">
+    <div class="story-image"></div>
+    <div class="story-content">
+      <div class="story-label reveal">Our Story</div>
+      <h2 class="story-title reveal">Why Prezerve?</h2>
+      <p class="story-desc reveal">Born from a simple question: why does beauty need to come in plastic? We set out to prove that exceptional personal care doesn't require compromise — not for your skin, not for your hair, and certainly not for the planet.</p>
+    </div>
+  </div>
+  <div class="story-section">
+    <div class="story-image" style="background:linear-gradient(135deg, #c8bfb2, #b8afa0);"></div>
+    <div class="story-content">
+      <div class="story-label reveal">Our Process</div>
+      <h2 class="story-title reveal">Science Meets<br>Nature.</h2>
+      <p class="story-desc reveal">Each formulation undergoes rigorous testing to ensure it delivers visible results. We combine time-honored botanical wisdom with modern cosmetic science, creating products that are as effective as they are sustainable.</p>
+    </div>
+  </div>
+  <div class="story-section">
+    <div class="story-image" style="background:linear-gradient(135deg, #b8afa0, #a89f90);"></div>
+    <div class="story-content">
+      <div class="story-label reveal">Our Promise</div>
+      <h2 class="story-title reveal">Beauty Without<br>Compromise.</h2>
+      <p class="story-desc reveal">No sulfates. No parabens. No synthetic fragrances. No plastic. Just pure, potent ingredients that work in harmony with your body and the environment. This is beauty redefined.</p>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section id="reviews">
+  <div class="reviews-header">
+    <div class="section-eyebrow reveal">Testimonials</div>
+    <h2 class="section-title reveal">Loved by Thousands.</h2>
+  </div>
+  <div class="reviews-track">
+    <div class="review-card">
+      <div class="review-stars">
+        <div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div>
+      </div>
+      <p class="review-text">"I was skeptical about solid shampoo, but this completely transformed my hair. Softer, shinier, and I love that there's zero plastic waste."</p>
+      <p class="review-author">Priya M. — Verified Buyer</p>
+    </div>
+    <div class="review-card">
+      <div class="review-stars">
+        <div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div>
+      </div>
+      <p class="review-text">"The face cleanser bar is incredibly gentle yet effective. My skin has never felt this balanced. Absolutely worth every rupee."</p>
+      <p class="review-author">Ananya K. — Verified Buyer</p>
+    </div>
+    <div class="review-card">
+      <div class="review-stars">
+        <div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div>
+      </div>
+      <p class="review-text">"Finally, a brand that doesn't make me choose between quality and sustainability. The conditioner bar lasts forever and works better than liquid ones."</p>
+      <p class="review-author">Rahul S. — Verified Buyer</p>
+    </div>
+    <div class="review-card">
+      <div class="review-stars">
+        <div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div>
+      </div>
+      <p class="review-text">"Bought the complete set for my family. Everyone found their favorite product. The packaging is beautiful and the products genuinely work."</p>
+      <p class="review-author">Meera T. — Verified Buyer</p>
+    </div>
+    <div class="review-card">
+      <div class="review-stars">
+        <div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div>
+      </div>
+      <p class="review-text">"As someone with sensitive skin, finding the right cleanser was always a challenge. Prezerve's face bar is the first product that doesn't irritate my skin."</p>
+      <p class="review-author">Divya R. — Verified Buyer</p>
+    </div>
+    <div class="review-card">
+      <div class="review-stars">
+        <div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div>
+      </div>
+      <p class="review-text">"The scent is divine — natural and subtle, not overpowering. My bathroom counter has never looked cleaner without all those plastic bottles."</p>
+      <p class="review-author">Karthik N. — Verified Buyer</p>
+    </div>
+    <!-- Duplicate for infinite scroll -->
+    <div class="review-card">
+      <div class="review-stars">
+        <div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div>
+      </div>
+      <p class="review-text">"I was skeptical about solid shampoo, but this completely transformed my hair. Softer, shinier, and I love that there's zero plastic waste."</p>
+      <p class="review-author">Priya M. — Verified Buyer</p>
+    </div>
+    <div class="review-card">
+      <div class="review-stars">
+        <div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div>
+      </div>
+      <p class="review-text">"The face cleanser bar is incredibly gentle yet effective. My skin has never felt this balanced. Absolutely worth every rupee."</p>
+      <p class="review-author">Ananya K. — Verified Buyer</p>
+    </div>
+    <div class="review-card">
+      <div class="review-stars">
+        <div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div>
+      </div>
+      <p class="review-text">"Finally, a brand that doesn't make me choose between quality and sustainability. The conditioner bar lasts forever and works better than liquid ones."</p>
+      <p class="review-author">Rahul S. — Verified Buyer</p>
+    </div>
+    <div class="review-card">
+      <div class="review-stars">
+        <div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div>
+      </div>
+      <p class="review-text">"Bought the complete set for my family. Everyone found their favorite product. The packaging is beautiful and the products genuinely work."</p>
+      <p class="review-author">Meera T. — Verified Buyer</p>
+    </div>
+    <div class="review-card">
+      <div class="review-stars">
+        <div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div>
+      </div>
+      <p class="review-text">"As someone with sensitive skin, finding the right cleanser was always a challenge. Prezerve's face bar is the first product that doesn't irritate my skin."</p>
+      <p class="review-author">Divya R. — Verified Buyer</p>
+    </div>
+    <div class="review-card">
+      <div class="review-stars">
+        <div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div>
+      </div>
+      <p class="review-text">"The scent is divine — natural and subtle, not overpowering. My bathroom counter has never looked cleaner without all those plastic bottles."</p>
+      <p class="review-author">Karthik N. — Verified Buyer</p>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section id="final-cta">
+  <canvas id="cta-canvas"></canvas>
+  <div class="cta-content">
+    <h2 class="cta-title">Beauty,<br><em>Without The Bottle.</em></h2>
+    <p class="cta-subtitle">Join thousands who have already made the switch to solid beauty. Your skin, your hair, and the planet will thank you.</p>
+    <a href="#product-showcase" class="btn-primary"><span>Explore Prezerve</span></a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">PREZERVE</div>
+      <p class="footer-tagline">Beauty without compromise. Solid formulations for a sustainable future.</p>
+    </div>
+    <div class="footer-column">
+      <h4>Shop</h4>
+      <ul>
+        <li><a href="#">All Products</a></li>
+        <li><a href="#">Hair Care</a></li>
+        <li><a href="#">Skin Care</a></li>
+        <li><a href="#">Body Care</a></li>
+        <li><a href="#">Gift Sets</a></li>
+      </ul>
+    </div>
+    <div class="footer-column">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">Our Story</a></li>
+        <li><a href="#">Sustainability</a></li>
+        <li><a href="#">Ingredients</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-column">
+      <h4>Support</h4>
+      <ul>
+        <li><a href="#">FAQ</a></li>
+        <li><a href="#">Shipping</a></li>
+        <li><a href="#">Returns</a></li>
+        <li><a href="#">Track Order</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copyright">© 2026 Prezerve. All rights reserved. Concept Demo.</p>
+    <p class="footer-copyright">Designed for the future of beauty.</p>
+  </div>
+</footer>
+
+<script>
+
+// ============================================
+// PREZERVE LUXURY DEMO - MAIN JAVASCRIPT
+// ============================================
+
+gsap.registerPlugin(ScrollTrigger);
+
+// ===== GLOBAL STATE =====
+let introSkipped = false;
+let flowerScene, flowerCamera, flowerRenderer, flowerMesh, particles;
+let heroScene, heroCamera, heroRenderer, heroParticles;
+let ctaScene, ctaCamera, ctaRenderer, ctaParticles;
+let mouseX = 0, mouseY = 0;
+let targetMouseX = 0, targetMouseY = 0;
+
+// ===== UTILITY FUNCTIONS =====
+function lerp(start, end, factor) {
+  return start + (end - start) * factor;
+}
+
+// ===== FLOWER INTRO - THREE.JS =====
+function initFlowerIntro() {
+  const canvas = document.getElementById('flower-canvas');
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+
+  flowerScene = new THREE.Scene();
+  flowerScene.background = new THREE.Color(0xFAF7F2);
+  flowerScene.fog = new THREE.FogExp2(0xFAF7F2, 0.02);
+
+  flowerCamera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+  flowerCamera.position.set(0, 0, 8);
+
+  flowerRenderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  flowerRenderer.setSize(width, height);
+  flowerRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  flowerRenderer.shadowMap.enabled = true;
+  flowerRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  flowerRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+  flowerRenderer.toneMappingExposure = 1.2;
+
+  // Lighting
+  const ambientLight = new THREE.AmbientLight(0xfff5e6, 0.6);
+  flowerScene.add(ambientLight);
+
+  const keyLight = new THREE.DirectionalLight(0xfff0d4, 1.2);
+  keyLight.position.set(5, 8, 5);
+  keyLight.castShadow = true;
+  keyLight.shadow.mapSize.width = 2048;
+  keyLight.shadow.mapSize.height = 2048;
+  keyLight.shadow.camera.near = 0.5;
+  keyLight.shadow.camera.far = 50;
+  flowerScene.add(keyLight);
+
+  const fillLight = new THREE.DirectionalLight(0xe8f0e0, 0.5);
+  fillLight.position.set(-5, 3, -3);
+  flowerScene.add(fillLight);
+
+  const rimLight = new THREE.SpotLight(0xffeedd, 0.8);
+  rimLight.position.set(0, -5, -5);
+  rimLight.lookAt(0, 0, 0);
+  flowerScene.add(rimLight);
+
+  // Create procedural flower
+  createProceduralFlower();
+
+  // Create floating particles
+  createFlowerParticles();
+
+  // Animate flower blooming
+  animateFlowerBloom();
+
+  // Start render loop
+  animateFlower();
+}
+
+function createProceduralFlower() {
+  const flowerGroup = new THREE.Group();
+
+  // Petal material with subsurface scattering simulation
+  const petalMaterial = new THREE.MeshPhysicalMaterial({
+    color: 0xf5e6d3,
+    emissive: 0xf0e0cc,
+    emissiveIntensity: 0.1,
+    roughness: 0.4,
+    metalness: 0.0,
+    clearcoat: 0.3,
+    clearcoatRoughness: 0.4,
+    sheen: 1.0,
+    sheenColor: 0xffe8d0,
+    sheenRoughness: 0.5,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.95,
+  });
+
+  const innerPetalMaterial = new THREE.MeshPhysicalMaterial({
+    color: 0xfae8d0,
+    emissive: 0xf5e0c8,
+    emissiveIntensity: 0.15,
+    roughness: 0.35,
+    metalness: 0.0,
+    clearcoat: 0.4,
+    sheen: 1.2,
+    sheenColor: 0xffeedd,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.9,
+  });
+
+  // Create petal layers
+  const layers = [
+    { count: 8, radius: 2.2, scale: [0.8, 1.4, 0.15], tilt: 0.3, material: petalMaterial },
+    { count: 6, radius: 1.6, scale: [0.7, 1.2, 0.12], tilt: 0.5, material: petalMaterial },
+    { count: 5, radius: 1.0, scale: [0.6, 1.0, 0.1], tilt: 0.7, material: innerPetalMaterial },
+    { count: 4, radius: 0.5, scale: [0.5, 0.8, 0.08], tilt: 0.9, material: innerPetalMaterial },
+  ];
+
+  layers.forEach((layer, layerIndex) => {
+    for (let i = 0; i < layer.count; i++) {
+      const angle = (i / layer.count) * Math.PI * 2 + (layerIndex * 0.3);
+
+      // Create petal geometry
+      const petalGeo = new THREE.SphereGeometry(1, 32, 32, 0, Math.PI * 2, 0, Math.PI * 0.6);
+      petalGeo.scale(layer.scale[0], layer.scale[1], layer.scale[2]);
+
+      const petal = new THREE.Mesh(petalGeo, layer.material.clone());
+
+      // Position petal
+      const x = Math.cos(angle) * layer.radius * 0.3;
+      const z = Math.sin(angle) * layer.radius * 0.3;
+      const y = layer.radius * 0.2;
+
+      petal.position.set(x, y, z);
+
+      // Rotate petal
+      petal.rotation.x = -layer.tilt + (Math.random() - 0.5) * 0.2;
+      petal.rotation.y = angle + Math.PI / 2;
+      petal.rotation.z = (Math.random() - 0.5) * 0.15;
+
+      // Store initial state for animation
+      petal.userData = {
+        initialRotationX: petal.rotation.x,
+        initialRotationY: petal.rotation.y,
+        initialRotationZ: petal.rotation.z,
+        initialPosition: petal.position.clone(),
+        layerIndex: layerIndex,
+        petalIndex: i,
+        bloomDelay: layerIndex * 0.4 + (i / layer.count) * 0.2,
+      };
+
+      // Start closed
+      petal.scale.set(0.01, 0.01, 0.01);
+      petal.rotation.x = -Math.PI * 0.4;
+
+      petal.castShadow = true;
+      petal.receiveShadow = true;
+      flowerGroup.add(petal);
+    }
+  });
+
+  // Center bud
+  const budGeo = new THREE.SphereGeometry(0.3, 32, 32);
+  const budMaterial = new THREE.MeshPhysicalMaterial({
+    color: 0xe8d5b8,
+    roughness: 0.5,
+    metalness: 0.1,
+    clearcoat: 0.2,
+  });
+  const bud = new THREE.Mesh(budGeo, budMaterial);
+  bud.scale.set(0.01, 0.01, 0.01);
+  bud.userData = { isBud: true, bloomDelay: 1.5 };
+  flowerGroup.add(bud);
+
+  // Stem
+  const stemGeo = new THREE.CylinderGeometry(0.04, 0.06, 3, 16);
+  const stemMaterial = new THREE.MeshPhysicalMaterial({
+    color: 0x5a7a3a,
+    roughness: 0.7,
+    metalness: 0.0,
+  });
+  const stem = new THREE.Mesh(stemGeo, stemMaterial);
+  stem.position.y = -1.8;
+  stem.scale.set(0.01, 0.01, 0.01);
+  stem.userData = { isStem: true, bloomDelay: 0 };
+  flowerGroup.add(stem);
+
+  flowerScene.add(flowerGroup);
+  flowerMesh = flowerGroup;
+}
+
+function createFlowerParticles() {
+  const particleCount = 80;
+  const geometry = new THREE.BufferGeometry();
+  const positions = new Float32Array(particleCount * 3);
+  const sizes = new Float32Array(particleCount);
+  const opacities = new Float32Array(particleCount);
+
+  for (let i = 0; i < particleCount; i++) {
+    positions[i * 3] = (Math.random() - 0.5) * 12;
+    positions[i * 3 + 1] = (Math.random() - 0.5) * 12;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 8;
+    sizes[i] = Math.random() * 3 + 1;
+    opacities[i] = Math.random() * 0.5 + 0.2;
+  }
+
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+  geometry.setAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
+
+  const material = new THREE.PointsMaterial({
+    color: 0xd4c4a8,
+    size: 0.05,
+    transparent: true,
+    opacity: 0.6,
+    sizeAttenuation: true,
+    blending: THREE.AdditiveBlending,
+  });
+
+  particles = new THREE.Points(geometry, material);
+  flowerScene.add(particles);
+}
+
+function animateFlowerBloom() {
+  const tl = gsap.timeline({
+    onComplete: () => {
+      if (!introSkipped) {
+        transitionToHero();
+      }
+    }
+  });
+
+  // Phase 1: Stem grows (0-1s)
+  const stem = flowerMesh.children.find(c => c.userData.isStem);
+  if (stem) {
+    tl.to(stem.scale, { x: 1, y: 1, z: 1, duration: 1, ease: 'power2.out' }, 0);
+  }
+
+  // Phase 2: Petals bloom (1-3.5s)
+  flowerMesh.children.forEach(child => {
+    if (child.userData.bloomDelay !== undefined && !child.userData.isStem && !child.userData.isBud) {
+      const delay = 0.5 + child.userData.bloomDelay;
+
+      tl.to(child.scale, {
+        x: 1, y: 1, z: 1,
+        duration: 1.2,
+        ease: 'elastic.out(1, 0.6)',
+      }, delay);
+
+      tl.to(child.rotation, {
+        x: child.userData.initialRotationX,
+        duration: 1.2,
+        ease: 'power3.out',
+      }, delay);
+    }
+  });
+
+  // Phase 3: Bud appears
+  const bud = flowerMesh.children.find(c => c.userData.isBud);
+  if (bud) {
+    tl.to(bud.scale, { x: 1, y: 1, z: 1, duration: 0.8, ease: 'back.out(1.5)' }, 2);
+  }
+
+  // Phase 4: Camera push-in
+  tl.to(flowerCamera.position, {
+    z: 4,
+    duration: 2,
+    ease: 'power2.inOut',
+  }, 1.5);
+
+  // Phase 5: Logo reveal
+  tl.to('.preloader-logo', {
+    opacity: 1,
+    y: 0,
+    duration: 1,
+    ease: 'power3.out',
+  }, 2.5);
+
+  tl.to('.preloader-tagline', {
+    opacity: 1,
+    duration: 0.8,
+    ease: 'power2.out',
+  }, 3);
+
+  tl.to('.skip-intro', {
+    opacity: 1,
+    duration: 0.5,
+  }, 1);
+
+  // Phase 6: Dissolve and transition
+  tl.to('.preloader-content', {
+    opacity: 0,
+    scale: 1.1,
+    duration: 0.8,
+    ease: 'power2.in',
+  }, 4);
+
+  tl.to(flowerMesh.scale, {
+    x: 1.5, y: 1.5, z: 1.5,
+    duration: 1,
+    ease: 'power2.in',
+  }, 4);
+
+  tl.to(flowerMesh.rotation, {
+    y: Math.PI,
+    duration: 1,
+    ease: 'power2.in',
+  }, 4);
+
+  tl.to('.preloader-content', {
+    opacity: 0,
+    duration: 0.5,
+  }, 4.5);
+}
+
+function animateFlower() {
+  if (!flowerRenderer) return;
+
+  requestAnimationFrame(animateFlower);
+
+  const time = Date.now() * 0.001;
+
+  // Gentle rotation
+  if (flowerMesh) {
+    flowerMesh.rotation.y += 0.002;
+
+    // Gentle sway
+    flowerMesh.rotation.z = Math.sin(time * 0.5) * 0.02;
+  }
+
+  // Particle animation
+  if (particles) {
+    const positions = particles.geometry.attributes.position.array;
+    for (let i = 0; i < positions.length; i += 3) {
+      positions[i + 1] += Math.sin(time + positions[i]) * 0.002;
+      positions[i] += Math.cos(time * 0.5 + positions[i + 1]) * 0.001;
+    }
+    particles.geometry.attributes.position.needsUpdate = true;
+    particles.rotation.y = time * 0.05;
+  }
+
+  flowerRenderer.render(flowerScene, flowerCamera);
+}
+
+function transitionToHero() {
+  const tl = gsap.timeline();
+
+  tl.to('#preloader', {
+    opacity: 0,
+    duration: 1,
+    ease: 'power2.inOut',
+    onComplete: () => {
+      document.getElementById('preloader').style.display = 'none';
+      initHeroScene();
+      animateHeroEntrance();
+    }
+  });
+}
+
+function skipIntro() {
+  introSkipped = true;
+  gsap.killTweensOf('*');
+  gsap.to('#preloader', {
+    opacity: 0,
+    duration: 0.8,
+    ease: 'power2.inOut',
+    onComplete: () => {
+      document.getElementById('preloader').style.display = 'none';
+      initHeroScene();
+      animateHeroEntrance();
+    }
+  });
+}
+
+// ===== HERO SCENE =====
+function initHeroScene() {
+  const canvas = document.getElementById('hero-canvas');
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+
+  heroScene = new THREE.Scene();
+
+  heroCamera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+  heroCamera.position.set(0, 0, 10);
+
+  heroRenderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  heroRenderer.setSize(width, height);
+  heroRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  // Ambient particles
+  const particleCount = 50;
+  const geometry = new THREE.BufferGeometry();
+  const positions = new Float32Array(particleCount * 3);
+
+  for (let i = 0; i < particleCount; i++) {
+    positions[i * 3] = (Math.random() - 0.5) * 20;
+    positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
+  }
+
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+  const material = new THREE.PointsMaterial({
+    color: 0xc4a77d,
+    size: 0.08,
+    transparent: true,
+    opacity: 0.4,
+    sizeAttenuation: true,
+    blending: THREE.AdditiveBlending,
+  });
+
+  heroParticles = new THREE.Points(geometry, material);
+  heroScene.add(heroParticles);
+
+  animateHero();
+}
+
+function animateHero() {
+  if (!heroRenderer) return;
+  requestAnimationFrame(animateHero);
+
+  const time = Date.now() * 0.001;
+
+  if (heroParticles) {
+    heroParticles.rotation.y = time * 0.02;
+    heroParticles.rotation.x = Math.sin(time * 0.1) * 0.05;
+  }
+
+  // Mouse parallax
+  targetMouseX += (mouseX - targetMouseX) * 0.05;
+  targetMouseY += (mouseY - targetMouseY) * 0.05;
+
+  if (heroCamera) {
+    heroCamera.position.x = targetMouseX * 0.5;
+    heroCamera.position.y = -targetMouseY * 0.3;
+    heroCamera.lookAt(0, 0, 0);
+  }
+
+  heroRenderer.render(heroScene, heroCamera);
+}
+
+function animateHeroEntrance() {
+  const tl = gsap.timeline();
+
+  tl.to('.hero-eyebrow', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, 0.3);
+  tl.to('.hero-title', { opacity: 1, y: 0, duration: 1, ease: 'power3.out' }, 0.5);
+  tl.to('.hero-subtitle', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, 0.8);
+  tl.to('.hero-buttons', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, 1);
+  tl.to('.hero-products', { opacity: 1, y: 0, duration: 1, ease: 'power3.out' }, 1.2);
+}
+
+// ===== CTA SCENE =====
+function initCTAScene() {
+  const canvas = document.getElementById('cta-canvas');
+  if (!canvas) return;
+
+  const width = canvas.parentElement.offsetWidth;
+  const height = canvas.parentElement.offsetHeight;
+
+  ctaScene = new THREE.Scene();
+  ctaScene.background = new THREE.Color(0x1A1A1A);
+
+  ctaCamera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+  ctaCamera.position.set(0, 0, 10);
+
+  ctaRenderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  ctaRenderer.setSize(width, height);
+  ctaRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  // Botanical particles
+  const particleCount = 100;
+  const geometry = new THREE.BufferGeometry();
+  const positions = new Float32Array(particleCount * 3);
+  const colors = new Float32Array(particleCount * 3);
+
+  for (let i = 0; i < particleCount; i++) {
+    positions[i * 3] = (Math.random() - 0.5) * 20;
+    positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
+
+    colors[i * 3] = 0.4 + Math.random() * 0.3;
+    colors[i * 3 + 1] = 0.6 + Math.random() * 0.3;
+    colors[i * 3 + 2] = 0.3 + Math.random() * 0.2;
+  }
+
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+  const material = new THREE.PointsMaterial({
+    size: 0.06,
+    transparent: true,
+    opacity: 0.5,
+    sizeAttenuation: true,
+    blending: THREE.AdditiveBlending,
+    vertexColors: true,
+  });
+
+  ctaParticles = new THREE.Points(geometry, material);
+  ctaScene.add(ctaParticles);
+
+  animateCTA();
+}
+
+function animateCTA() {
+  if (!ctaRenderer) return;
+  requestAnimationFrame(animateCTA);
+
+  const time = Date.now() * 0.001;
+
+  if (ctaParticles) {
+    ctaParticles.rotation.y = time * 0.015;
+    ctaParticles.rotation.x = Math.sin(time * 0.08) * 0.03;
+
+    const positions = ctaParticles.geometry.attributes.position.array;
+    for (let i = 0; i < positions.length; i += 3) {
+      positions[i + 1] += Math.sin(time + positions[i] * 0.5) * 0.003;
+    }
+    ctaParticles.geometry.attributes.position.needsUpdate = true;
+  }
+
+  ctaRenderer.render(ctaScene, ctaCamera);
+}
+
+// ===== MOUSE TRACKING =====
+document.addEventListener('mousemove', (e) => {
+  mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+  mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+
+  // 3D tilt on product cards
+  document.querySelectorAll('[data-tilt]').forEach(card => {
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotateX = (y - centerY) / centerY * -8;
+      const rotateY = (x - centerX) / centerX * 8;
+
+      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px)`;
+    } else {
+      card.style.transform = '';
+    }
+  });
+});
+
+// ===== NAVIGATION SCROLL =====
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('main-nav');
+  if (window.scrollY > 100) {
+    nav.classList.add('scrolled');
+  } else {
+    nav.classList.remove('scrolled');
+  }
+});
+
+// ===== SCROLL REVEAL =====
+function initScrollReveal() {
+  const reveals = document.querySelectorAll('.reveal');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('active');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+  reveals.forEach(el => observer.observe(el));
+}
+
+// ===== GSAP SCROLL ANIMATIONS =====
+function initScrollAnimations() {
+  // Future product orbit animation
+  gsap.to('.orbit-item', {
+    scrollTrigger: {
+      trigger: '#future-beauty',
+      start: 'top center',
+      end: 'bottom center',
+      scrub: 1,
+    },
+    rotation: 360,
+    duration: 3,
+    stagger: 0.2,
+  });
+
+  // Sustainability bottle transformation
+  gsap.to('.bottle', {
+    scrollTrigger: {
+      trigger: '#sustainability',
+      start: 'top center',
+      end: 'center center',
+      scrub: 1,
+    },
+    scale: 0,
+    opacity: 0,
+    rotationY: 180,
+    stagger: 0.1,
+  });
+
+  gsap.fromTo('.bar-product', 
+    { scale: 0, opacity: 0 },
+    {
+      scrollTrigger: {
+        trigger: '#sustainability',
+        start: 'center center',
+        end: 'bottom center',
+        scrub: 1,
+      },
+      scale: 1,
+      opacity: 1,
+      display: 'flex',
+    }
+  );
+
+  // Counter animation
+  document.querySelectorAll('[data-count]').forEach(counter => {
+    const target = parseInt(counter.getAttribute('data-count'));
+
+    ScrollTrigger.create({
+      trigger: counter,
+      start: 'top 80%',
+      onEnter: () => {
+        gsap.to(counter, {
+          innerHTML: target,
+          duration: 2,
+          ease: 'power2.out',
+          snap: { innerHTML: 1 },
+          onUpdate: function() {
+            counter.innerHTML = Math.round(this.targets()[0].innerHTML);
+          }
+        });
+      },
+      once: true,
+    });
+  });
+
+  // Parallax on story images
+  document.querySelectorAll('.story-image, .collection-image').forEach(img => {
+    gsap.to(img, {
+      scrollTrigger: {
+        trigger: img,
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: 1,
+      },
+      y: -50,
+      ease: 'none',
+    });
+  });
+
+  // Future product rotation on scroll
+  gsap.to('#future-product', {
+    scrollTrigger: {
+      trigger: '#future-beauty',
+      start: 'top bottom',
+      end: 'bottom top',
+      scrub: 1,
+    },
+    rotationY: 360,
+    ease: 'none',
+  });
+
+  // Ingredients product rotation
+  gsap.to('#ingredients-product', {
+    scrollTrigger: {
+      trigger: '#ingredients',
+      start: 'top bottom',
+      end: 'bottom top',
+      scrub: 1,
+    },
+    rotation: 15,
+    ease: 'none',
+  });
+
+  // Ingredient particles float
+  gsap.utils.toArray('.ingredient-particle').forEach((particle, i) => {
+    gsap.to(particle, {
+      scrollTrigger: {
+        trigger: '#ingredients',
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: 1,
+      },
+      y: -30 + i * 15,
+      x: 10 - i * 5,
+      ease: 'none',
+    });
+  });
+}
+
+// ===== INGREDIENT INTERACTION =====
+function initIngredientInteraction() {
+  const items = document.querySelectorAll('.ingredient-item');
+
+  items.forEach(item => {
+    item.addEventListener('mouseenter', () => {
+      items.forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+    });
+  });
+}
+
+// ===== RESIZE HANDLER =====
+window.addEventListener('resize', () => {
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+
+  if (flowerCamera && flowerRenderer) {
+    flowerCamera.aspect = width / height;
+    flowerCamera.updateProjectionMatrix();
+    flowerRenderer.setSize(width, height);
+  }
+
+  if (heroCamera && heroRenderer) {
+    heroCamera.aspect = width / height;
+    heroCamera.updateProjectionMatrix();
+    heroRenderer.setSize(width, height);
+  }
+
+  if (ctaCamera && ctaRenderer) {
+    const ctaWidth = document.getElementById('final-cta').offsetWidth;
+    const ctaHeight = document.getElementById('final-cta').offsetHeight;
+    ctaCamera.aspect = ctaWidth / ctaHeight;
+    ctaCamera.updateProjectionMatrix();
+    ctaRenderer.setSize(ctaWidth, ctaHeight);
+  }
+});
+
+// ===== SMOOTH SCROLL FOR ANCHORS =====
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      gsap.to(window, {
+        duration: 1.2,
+        scrollTo: { y: target, offsetY: 80 },
+        ease: 'power3.inOut',
+      });
+    }
+  });
+});
+
+// ===== INITIALIZATION =====
+document.addEventListener('DOMContentLoaded', () => {
+  initFlowerIntro();
+  initScrollReveal();
+  initScrollAnimations();
+  initIngredientInteraction();
+
+  // Delay CTA scene init until visible
+  const ctaObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !ctaScene) {
+        initCTAScene();
+      }
+    });
+  }, { threshold: 0.1 });
+
+  const ctaSection = document.getElementById('final-cta');
+  if (ctaSection) ctaObserver.observe(ctaSection);
+});
+
+// ===== GSAP SCROLLTO PLUGIN (inline) =====
+gsap.registerPlugin({
+  name: 'scrollTo',
+  init(target, value) {
+    this.target = target;
+    this.y = typeof value === 'object' ? value.y : value;
+    this.offsetY = typeof value === 'object' ? (value.offsetY || 0) : 0;
+    this.startY = window.pageYOffset;
+
+    if (typeof this.y === 'string') {
+      const el = document.querySelector(this.y);
+      this.y = el ? el.offsetTop - this.offsetY : 0;
+    }
+  },
+  render(ratio) {
+    window.scrollTo(0, this.startY + (this.y - this.startY) * ratio);
+  }
+});
+</script>
+</body>
+</html>
